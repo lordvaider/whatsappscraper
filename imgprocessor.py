@@ -1,6 +1,5 @@
 import cv2
 import pytesseract
-from PIL import Image
 import re
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
@@ -81,36 +80,6 @@ def get_format_type(sarr):
     return 'Single'
 
 
-def extract_ctype_and_duration(sarr):
-    p = re.compile(' *'.join([ctype_exp, duration_exp]) + '$')
-    cnd_arr = [x for x in sarr if bool(re.match(p, x.strip()))]
-
-    if len(cnd_arr) > 0:
-        res = []
-
-        for cnd in cnd_arr:
-            obj = {}
-            [obj['ctype'], obj['duration']] = re.findall(p, cnd.strip())[0]
-            res.append(obj)
-
-    return res
-
-
-def extract_time_and_memory(sarr):
-    p = re.compile(' *'.join([time_exp, memory_exp]) + '$')
-    tnm_arr = [x for x in sarr if bool(re.match((p, x.strip())))]
-
-    if len(tnm_arr) > 0:
-        res = []
-
-        for tnm in tnm_arr:
-            obj = {}
-            [obj['time'], obj['memory']] = re.findall(p, tnm.strip())[0]
-            res.append(obj)
-
-    return res
-
-
 def extract_date(sarr, msgno):
     p = re.compile(' *'.join([day_exp, month_exp, year_exp]) + '$')
     dates = [(i, x) for i, x in enumerate(sarr) if bool(re.match(p, x.strip()))]
@@ -176,12 +145,6 @@ def parse_image_arr(sarr, i):
             call['size'] = size
         elif lt == 'u':
             parsed['unknown tokens'].append(l)
-
-    # parsed['msgformat'] = get_format_type(sarr)
-    # if parsed['msgformat'] == 'Joined':
-    #     cnd = extract_ctype_and_duration(sarr)
-    #     tnm = extract_time_and_memory(sarr)
-    #     parsed['calls'] = [dict(a, **b) for (a, b) in zip(cnd, tnm)]
 
     return parsed
 
